@@ -1,5 +1,3 @@
-const secrets = {
-    dbUri: process.env.DB_URI
-}
-
+require('dotenv').config()
+const secrets = { dbUri: process.env.DB_URI }
 export const getSecret = key => secrets[key]
