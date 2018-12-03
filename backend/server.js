@@ -3,21 +3,24 @@ import express, { Router } from 'express';
 import bodyParser from 'body-parser';
 import logger from 'morgan';
 import mongoose from 'mongoose';
-import { getSecret } from './secrets';
+import task from './models/task-model';
+import timer from './models/timer-model';
+import api from './controllers/api'
 require('dotenv').config();
 
 const app = express();
 const router = Router();
 
 const API_PORT = process.env.API_PORT || 3002;
-console.log(process.env.DB_URI)
-mongoose.connect(process.env.DB_URI)
+mongoose.connect(process.env.DB_URI, { useNewUrlParser:true })
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error'))
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(logger('dev'));
+
+api(app,task,timer)
 
 router.get('/test', (req,res) => {
     console.log('asdf')
