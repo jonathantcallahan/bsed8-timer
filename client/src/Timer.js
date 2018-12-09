@@ -4,67 +4,73 @@ class Timer extends Component {
     constructor(props){
         super(props)
         this.state = {
-            currentSubtask: 0,
-            currentTimer: '00:00:00',
-            currentTimerS: 0,
-            currentPlusMinus: '00:00:00',
-            currentPlusMinusS: 0
+            task: '',
+            subtasks: [],
+            records: [],
+            currentSubtask: -1,
+            currentTimerSeconds: 0,
+            currentPlusMinusSeconds: 0,
+            totalTimerSeconds: 0,
+            totalPlusMinusSeconds: 0,
+            pauseTimers: false
         }
-        this.nextSubtask = this.nextSubtask.bind(this)
-        this.countdown = this.countdown.bind(this)
         this.getTime = this.getTime.bind(this)
+        this.updateTimer = this.updateTimer.bind(this)
+        this.nextSubtask = this.nextSubtask.bind(this)
     }
     componentDidMount(){
         this.setState((state,props) => {
-            return {...props.timerInfo}
+            return {...props.timerInfo, totalPlusMinusSeconds: parseInt(props.timerInfo.records[0])}
         })
-
-    }
-    createTimers = records => {
-
     }
     getTime = seconds => {
-        console.log(seconds)
+        // convert secconds in hh:mm:ss
         const h = Math.floor(seconds/3600)
         const m = Math.floor((seconds-(h*3600))/60)
         const s = seconds - (h*3600) - (m*60)
-        return [h,m,s]
-    }
-    countdown = clear => {
-        clear && clearTimeout(setTimer)
-        const timeRem = this.state.currentPlusMinusS - this.state.currentTimerS;
-        console.log(timeRem)
-
-        // converting seconds to hh:mm:ss
-        let current = this.getTime(this.state.currentTimerS)
-        let plusMinus = this.getTime(this.state.currentPlusMinusS)
-
-        current = `${current[0]}:${current[1]}:${current[2]}`
-        plusMinus = `${plusMinus[0]}:${plusMinus[1]}:${plusMinus[2]}`
+        let digits = [String(h),String(m),String(s)]
+        console.log(digits)
+        console.log(digits[0].length, digits[1].length, digits[2].length)
+        // make sure each number is 2 digits
+        digits = digits.map(e => e.length <= 1 ? `0${e}` : e)
         
-        this.setState((state) => {
-            return { 
-                currentTimerS: this.state.currentTimerS + 1,
-                currentTimer: current,
-                currentPlusMinusS: this.state.currentPlusMinusS - 1,
-                currentPlusMinus: plusMinus
-            }
-        })
-        const setTimer = setTimeout(this.countdown.bind(null, false), 1000)
+        return `${digits[0]}:${digits[1]}:${digits[2]}`
     }
-    componentDidUpdate(){
-        console.log(this.state)
+    updateTimer = (loop = 0) => {
+        // if loop > current seconds return
+        if(loop>this.state.currentTimerSeconds+1 || this.state.pauseTimers){ return }
+        
+        // add 1 second to current seconds and to loop
+        // calculate time and plus minus
+        this.setState({  
+                currentTimerSeconds:this.state.currentTimerSeconds+1,
+                currentPlusMinusSeconds:this.state.currentPlusMinusSeconds-1,
+                totalTimerSeconds:this.state.totalTimerSeconds+1,
+                totalPlusMinusSeconds:this.state.totalPlusMinusSeconds-1,
+                [`subtaskPlusMinus_${this.state.currentSubtask}`]:this.getTime(this.state.currentPlusMinusSeconds-1)
+
+            })
+        loop++
+        setTimeout(this.updateTimer.bind(this,loop),1000)
+        // call recursively & end when next subtask called
     }
     nextSubtask = () => {
-        this.setState(state => {
-            return { 
-                currentSubtask: this.state.currentSubtask + 1,
-                currentPlusMinusS: parseInt(this.state.records[this.state.currentSubtask + 1])
-            }
-        })
-        // argument will clear settimeout so that the previous recursive loop stops
-        this.countdown(true)
-        
+        // update current plus minus
+        if(this.state.currentSubtask >= this.state.subtasks.length-1){
+            console.log('all subtasks completed')
+            this.setState({pauseTimers:true})
+            return
+        }
+        this.setState({
+            currentSubtask:this.state.currentSubtask+1,
+            currentTimerSeconds:0,
+            currentPlusMinusSeconds:parseInt(this.state.records[this.state.currentSubtask+1])
+        }, this.updateTimer(0))
+        // clear current seconds
+        // start timer, pass with arg 0
+    }
+    componentDidUpdate(){
+
     }
     render(){
         return (
@@ -73,20 +79,22 @@ class Timer extends Component {
                     <div className='timer-title'>{this.props.timerInfo.task}</div>
                     <div className='timer-time-container'>
                         <div className='timer-total-times-container'>
-                            <div className='timer-total-times-record'>00:00:00</div>
-                            <div className='timer-total-times-current green'>00:00:00</div>
+                            <div className='timer-total-times-record'>{this.state.totalPlusMinusSeconds ? this.getTime(this.state.totalPlusMinusSeconds) : '00:00:00'}</div>
+                            <div className='timer-total-times-current green'>{this.state.totalTimerSeconds ? this.getTime(this.state.totalTimerSeconds) : '00:00:00'}</div>
                         </div>
                         <div className='timer-large-time-container'>
-                            <div className='timer-large-time'>{this.state.currentTimer && this.state.currentTimer}</div>
-                            <div className='timer-large-time-plus-minus'>{this.state.currentPlusMinus && this.state.currentPlusMinus}</div>
+                            <div className='timer-large-time'>{this.state.currentTimerSeconds > 0 ? this.getTime(this.state.currentTimerSeconds) : '00:00:00'}</div>
+                            <div className='timer-large-time-plus-minus'>{this.state.currentPlusMinusSeconds > 0 ? this.getTime(this.state.currentPlusMinusSeconds) : '00:00:00'}</div>
                         </div>
                         <div className='timer-subtasks-container'>
                             {
-                                this.state.subtasks && this.state.subtasks.filter((e,i) => i !== 0).map((e,i) => {
+                                this.state.subtasks && this.state.subtasks.map((e,i) => {
                                     return (
                                         <div className='timer-subtask' key={i} id={`subtask-${i}`} record={this.state.records[i + 1]}>
-                                            <div className='timer-subtask-title'>example subtask</div>
-                                            <div className='timer-subtask-plus-minus'>+00:00:00</div>
+                                            <div className='timer-subtask-title'>{this.state.subtasks[i]}</div>
+                                            <div className='timer-subtask-plus-minus'>
+                                            {this.state[`subtaskPlusMinus_${i}`] ? this.state[`subtaskPlusMinus_${i}`] : '00:00:00' }
+                                            </div>
                                         </div>
                                     )
                                 })
