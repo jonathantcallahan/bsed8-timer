@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Timer from './Timer'
+import SmallTimer from './SmallTimers'
 
 class Home extends Component {
     constructor(props){
@@ -15,6 +16,7 @@ class Home extends Component {
     render(){
         return(
             <div>
+                <SmallTimer/>
                 <Timer timerInfo={{...this.state.task}} />
             </div>
         )

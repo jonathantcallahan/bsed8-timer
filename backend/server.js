@@ -22,11 +22,6 @@ app.use(logger('dev'));
 
 api(app,task,timer)
 
-router.get('/test', (req,res) => {
-    console.log('asdf')
-    res.json({ message: 'asdf' });
-});
-
 app.use('/api',router);
 
 app.listen(API_PORT, () => console.log(`Listening on port ${API_PORT}`));
