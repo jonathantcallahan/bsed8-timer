@@ -7,7 +7,7 @@ class SmallTimer extends Component {
         this.state = {}
     }
     componentDidMount(){
-        timerApi.createTask({task:'sample task name',subtasks:['subtask 1','subtask 2','subtask 3']})
+        //timerApi.createTask({task:'sample task name',subtasks:['subtask 1','subtask 2','subtask 3']})
     }
     render(){
         return (
