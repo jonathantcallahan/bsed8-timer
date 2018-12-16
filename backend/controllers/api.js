@@ -18,6 +18,7 @@ export default (app,Task) => {
         t.task = 'task name'
         t.subtasks = ['subtask1','subtask2','subtask3']
         t.records = ['000234','000022','000012','000010']
+        console.log(t)
         t.save()
         res.send('asdf')
     })

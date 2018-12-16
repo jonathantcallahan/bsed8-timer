@@ -13,7 +13,7 @@ const app = express();
 const router = Router();
 
 const API_PORT = process.env.API_PORT || 3002;
-mongoose.connect(process.env.DB_URI, { useNewUrlParser:true })
+mongoose.connect('mongodb://localhost:27017/timer', { useNewUrlParser: true })
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error'))
 
