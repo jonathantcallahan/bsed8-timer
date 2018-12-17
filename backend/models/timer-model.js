@@ -5,10 +5,8 @@ const timerSchema = new Schema({
     user: String,
     date: String,
     task: String,
-    subtasks: {
-        type: Map,
-        of: Array
-    }
+    total: String,
+    subtasks: [String]
 }, { timestamps: true });
 
 export default mongoose.model('timer', timerSchema)

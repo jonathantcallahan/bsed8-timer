@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import Axios from 'axios';
 
 class Timer extends Component {
     constructor(props){
@@ -12,16 +13,23 @@ class Timer extends Component {
             currentPlusMinusSeconds: 0,
             totalTimerSeconds: 0,
             totalPlusMinusSeconds: 0,
-            pauseTimers: false
+            pauseTimers: false,
+            taskPosted: false
         }
         this.getTime = this.getTime.bind(this)
         this.updateTimer = this.updateTimer.bind(this)
         this.nextSubtask = this.nextSubtask.bind(this)
+        this.postTask = this.postTask.bind(this)
     }
     componentDidMount(){
         this.setState((state,props) => {
             return {...props.timerInfo, totalPlusMinusSeconds: parseInt(props.timerInfo.records[0])}
         })
+    }
+    postTask = data => {
+        Axios.post('http://localhost:3002/api/update-task-records', data)
+            .then(d => console.log(d))
+            .catch(e => console.log(e))
     }
     getTime = seconds => {
         // convert secconds in hh:mm:ss
@@ -29,8 +37,8 @@ class Timer extends Component {
         const m = Math.floor((seconds-(h*3600))/60)
         const s = seconds - (h*3600) - (m*60)
         let digits = [String(h),String(m),String(s)]
-        console.log(digits)
-        console.log(digits[0].length, digits[1].length, digits[2].length)
+        //console.log(digits)
+        //console.log(digits[0].length, digits[1].length, digits[2].length)
         // make sure each number is 2 digits
         digits = digits.map(e => e.length <= 1 ? `0${e}` : e)
         
@@ -39,30 +47,53 @@ class Timer extends Component {
     updateTimer = (loop = 0) => {
         // if loop > current seconds return
         if(loop>this.state.currentTimerSeconds+1 || this.state.pauseTimers){ return }
-        
+        console.log(this.state.currentTimerSeconds)
         // add 1 second to current seconds and to loop
         // calculate time and plus minus
+        if(this.state.taskPosted){ return }
         this.setState({  
                 currentTimerSeconds:this.state.currentTimerSeconds+1,
                 currentPlusMinusSeconds:this.state.currentPlusMinusSeconds-1,
                 totalTimerSeconds:this.state.totalTimerSeconds+1,
                 totalPlusMinusSeconds:this.state.totalPlusMinusSeconds-1,
-                [`subtaskPlusMinus_${this.state.currentSubtask}`]:this.getTime(this.state.currentPlusMinusSeconds-1)
-
+                [`subtaskPlusMinus_${this.state.currentSubtask}`]:this.getTime(this.state.currentPlusMinusSeconds-1),
+                taskPosted: true
+            }, () => {
+                loop++
+                setTimeout(this.updateTimer.bind(this,loop),1000)
             })
-        loop++
-        setTimeout(this.updateTimer.bind(this,loop),1000)
         // call recursively & end when next subtask called
     }
     nextSubtask = () => {
         // update current plus minus
         if(this.state.currentSubtask >= this.state.subtasks.length-1){
-            console.log('all subtasks completed')
-            this.setState({pauseTimers:true})
-            return
+            // console.log('all subtasks completed')
+            this.setState({
+                pauseTimers:true,
+                [`subtaskSeconds_${this.state.currentSubtask}`]:this.state.currentTimerSeconds
+            },() => {
+                // console.log(this.state)
+                const date = new Date()
+                const subtasks = []
+                subtasks.push(String(this.state.totalTimerSeconds))
+                for(let property in this.state){
+                    if(property.includes('subtaskSeconds') && !property.includes('-1')) subtasks.push(String(this.state[property])) 
+                }
+                console.log(subtasks)
+                const data = {
+                    user: 'asdfasdf',
+                    date: date.getDate(),
+                    task: this.state.task,
+                    total: String(this.state.totalTimerSeconds),
+                    subtasks: subtasks
+                }
+                this.postTask(data)
+                return
+            })
         }
         this.setState({
             currentSubtask:this.state.currentSubtask+1,
+            [`subtaskSeconds_${this.state.currentSubtask}`]:this.state.currentTimerSeconds,
             currentTimerSeconds:0,
             currentPlusMinusSeconds:parseInt(this.state.records[this.state.currentSubtask+1])
         }, this.updateTimer(0))
