@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import timerApi from './scripts/timerApi'
+import Axios from 'axios';
 
 class SmallTimer extends Component {
     constructor(props){
@@ -7,7 +8,9 @@ class SmallTimer extends Component {
         this.state = {}
     }
     componentDidMount(){
-        //timerApi.createTask({task:'sample task name',subtasks:['subtask 1','subtask 2','subtask 3']})
+        Axios.get('http://localhost:3002/api/get-all-tasks')
+            .then(data => console.log(data))
+            .catch(err => console.log(err))
     }
     render(){
         return (

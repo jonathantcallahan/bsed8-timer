@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Timer from './Timer'
 import SmallTimer from './SmallTimers'
+import CreateTask from './CreateTask'
 import timerApi from './scripts/timerApi'
 import Axios from 'axios';
 
@@ -31,6 +32,7 @@ class Home extends Component {
         return(
             <div>
                 <SmallTimer/>
+                <CreateTask/>
                 <Timer timerInfo={{...this.state.task}} />
                 <div onClick={this.logState}>state</div>
             </div>
