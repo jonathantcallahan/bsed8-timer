@@ -10,6 +10,10 @@
     color: gray
 }
 
+.inline-block {
+    display: inline-block
+}
+
 .task-list-container, .container {
     border: 1px solid black;
     border-radius: 3px;
@@ -33,7 +37,7 @@
     padding: 2px 4px
 }
 
-.create-new-task-button {
+.create-new-task-button, .button {
     margin: 0px 10px 12px 10px;
     padding: 5px;
     color: white;
@@ -46,4 +50,33 @@
 
 .create-new-task-subtask-container {
     margin: 0px 10px 10px
+}
+
+.timer-time-container {
+    padding: 10px
+}
+
+.timer-total-times-container {
+    font-size: 10px
+}
+
+.timer-large-time {
+    font-size: 60px
+}
+
+.timer-large-time-plus-minus {
+    position: relative;
+    bottom: 30px;
+    left: 10px
+}
+
+.timer-subtask {
+    display: inline-block;
+    border: 2px solid black;
+    margin: -1px;
+    padding: 10px
+}
+
+.timer-button-next {
+    margin: 10px 0px 0px
 }

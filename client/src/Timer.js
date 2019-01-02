@@ -109,16 +109,16 @@ class Timer extends Component {
     render(){
         return (
             <div>
-                <div className='timer-container'>
-                    <div className='timer-title'>{this.props.timerInfo.task}</div>
+                <div className='timer-container container'>
+                    <div className='timer-title title bold'>{this.props.timerInfo.task}</div>
                     <div className='timer-time-container'>
                         <div className='timer-total-times-container'>
                             <div className='timer-total-times-record'>{this.state.totalPlusMinusSeconds ? this.getTime(this.state.totalPlusMinusSeconds) : '00:00:00'}</div>
                             <div className='timer-total-times-current green'>{this.state.totalTimerSeconds ? this.getTime(this.state.totalTimerSeconds) : '00:00:00'}</div>
                         </div>
                         <div className='timer-large-time-container'>
-                            <div className='timer-large-time'>{this.state.currentTimerSeconds > 0 ? this.getTime(this.state.currentTimerSeconds) : '00:00:00'}</div>
-                            <div className='timer-large-time-plus-minus'>{this.state.currentPlusMinusSeconds > 0 ? this.getTime(this.state.currentPlusMinusSeconds) : '00:00:00'}</div>
+                            <span className='timer-large-time'>{this.state.currentTimerSeconds > 0 ? this.getTime(this.state.currentTimerSeconds) : '00:00:00'}</span>
+                            <span className='timer-large-time-plus-minus'>{this.state.currentPlusMinusSeconds > 0 ? this.getTime(this.state.currentPlusMinusSeconds) : '00:00:00'}</span>
                         </div>
                         <div className='timer-subtasks-container'>
                             {
@@ -139,7 +139,7 @@ class Timer extends Component {
                         </div>
                         <div className='timer-buttons-container'>
                             <div className='timer-button-pause'>pause</div>
-                            <div className='timer-button-next' onClick={this.nextSubtask}>next</div>
+                            <div className='button timer-button-next' onClick={this.nextSubtask}>next</div>
                         </div>
                     </div>
                 </div>
