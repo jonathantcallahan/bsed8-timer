@@ -22,9 +22,9 @@ class Timer extends Component {
         this.postTask = this.postTask.bind(this)
     }
     componentDidMount(){
-        //this.props.timerInfo.task && this.setState((state,props) => {
-        //    return {...props.timerInfo, totalPlusMinusSeconds: parseInt(props.timerInfo.records[0])}
-        //})
+        this.props.timerInfo.task && this.setState((state,props) => {
+            return {...props.timerInfo, totalPlusMinusSeconds: parseInt(props.timerInfo.records[0])}
+        })
     }
     postTask = data => {
         Axios.post('http://localhost:3002/api/update-task-records', data)
@@ -50,16 +50,17 @@ class Timer extends Component {
         console.log(this.state.currentTimerSeconds)
         // add 1 second to current seconds and to loop
         // calculate time and plus minus
+        console.log(this.state)
         if(this.state.taskPosted){ return }
         this.setState({  
                 currentTimerSeconds:this.state.currentTimerSeconds+1,
-                currentPlusMinusSeconds:this.state.currentPlusMinusSeconds-1,
+                currentPlusMinusSeconds:this.state.records.length ? this.state.currentPlusMinusSeconds-1 : this.state.currentTimerSeconds,
                 totalTimerSeconds:this.state.totalTimerSeconds+1,
                 totalPlusMinusSeconds:this.state.totalPlusMinusSeconds-1,
-                [`subtaskPlusMinus_${this.state.currentSubtask}`]:this.getTime(this.state.currentPlusMinusSeconds-1),
-                taskPosted: true
+                [`subtaskPlusMinus_${this.state.currentSubtask}`]:this.getTime(this.state.currentPlusMinusSeconds-1)
             }, () => {
                 loop++
+                console.log(this.state)
                 setTimeout(this.updateTimer.bind(this,loop),1000)
             })
         // call recursively & end when next subtask called
@@ -79,7 +80,7 @@ class Timer extends Component {
                 for(let property in this.state){
                     if(property.includes('subtaskSeconds') && !property.includes('-1')) subtasks.push(String(this.state[property])) 
                 }
-                console.log(subtasks)
+                //console.log(subtasks)
                 const data = {
                     user: 'asdfasdf',
                     date: date.getDate(),
@@ -95,7 +96,9 @@ class Timer extends Component {
             currentSubtask:this.state.currentSubtask+1,
             [`subtaskSeconds_${this.state.currentSubtask}`]:this.state.currentTimerSeconds,
             currentTimerSeconds:0,
-            currentPlusMinusSeconds:parseInt(this.state.records[this.state.currentSubtask+1])
+            currentPlusMinusSeconds:this.state.records.length ? 
+                parseInt(this.state.records[this.state.currentSubtask+1]) :
+                this.state.currentTimerSeconds 
         }, this.updateTimer(0))
         // clear current seconds
         // start timer, pass with arg 0
@@ -121,7 +124,10 @@ class Timer extends Component {
                             {
                                 this.state.subtasks && this.state.subtasks.map((e,i) => {
                                     return (
-                                        <div className='timer-subtask' key={i} id={`subtask-${i}`} record={this.state.records[i + 1]}>
+                                        <div className='timer-subtask' 
+                                            key={i} 
+                                            id={`subtask-${i}`} 
+                                            record= {this.state.records.length ? this.state.records[i + 1] : 0}>
                                             <div className='timer-subtask-title'>{this.state.subtasks[i]}</div>
                                             <div className='timer-subtask-plus-minus'>
                                             {this.state[`subtaskPlusMinus_${i}`] ? this.state[`subtaskPlusMinus_${i}`] : '00:00:00' }

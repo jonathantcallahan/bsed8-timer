@@ -45,23 +45,31 @@ class CreateTimer extends Component {
     }
     render(){
         return(
-            <div>
-                <span>Create new task</span>
-                <input 
+            <div className='create-new-task-container container'>
+                <div className='title'>CREATE NEW TASK</div>
+                <div className='create-new-task-input'>
+                    <input 
                     type='text' 
-                    name='task' 
+                    name='task'
+                    placeholder='task'
                     value={this.state.task} 
                     onChange={this.update}></input>
-                <input type='text' 
-                    name='subtask' 
+                </div>
+                <div className='create-new-task-input'>
+                    <input type='text' 
+                    name='subtask'
+                    placeholder='subtask' 
                     value={this.state.subtask} 
                     onChange={this.update}
                     onKeyUp={this.addSubtask}></input>
-                <div onClick={this.create}>Create</div>
-                <div>{this.state.status}</div>
+                </div>
+                <div className='create-new-task-subtask-container'>
+                    <div className='bold'>{this.state.task}</div>
                 {this.state.subtasks.map((e,i) => {
-                    return <div key='{i}'>subtask {i}: {e}</div>
+                    return <div key='{i}'><span className='gray'>subtask {i+1}:</span> {e}</div>
                 })}
+                </div>
+                <div className='create-new-task-button button' onClick={this.create}>CREATE</div>
             </div>
         )
     }

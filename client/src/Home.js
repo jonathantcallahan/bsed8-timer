@@ -28,12 +28,12 @@ class Home extends Component {
     }
     logState(){console.log(this.state)}
     handler(s){
-        console.log(s)
+        // console.log(s)
         this.setState({
             task:s.task,
             subtasks:s.subtasks,
             records:s.records
-        },function(){console.log(this.state)})
+        })
     }
     render(){
         return(

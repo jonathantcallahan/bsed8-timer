@@ -13,7 +13,7 @@ class SmallTimer extends Component {
     componentDidMount(){
         Axios.get('http://localhost:3002/api/get-all-tasks')
             .then(data => {
-                console.log(data.data)
+                // console.log(data.data)
                 this.setState({tasks:data.data})
             })
             .catch(err => console.log(err))
@@ -23,11 +23,14 @@ class SmallTimer extends Component {
     }
     render(){
         return (
-            <div>
-                <span>small timer</span>
+            <div className='task-list-container'>
+                <div className='task-list-title'>TASK LIST</div>
                 {this.state.tasks.length && this.state.tasks.map((e,i) => {
                     return(
-                        <div id={i} onClick={this.selectTask}>{e.task}</div>
+                        <div 
+                            id={i}
+                            className='task-list-task' 
+                            onClick={this.selectTask}>{e.task}</div>
                     )
                 })}
             </div>
