@@ -11,13 +11,12 @@ class Home extends Component {
         super(props)
         this.state = {
             taskList: [],
-            task: {
-                task: 'example title',
-                subtasks: ['subtask 1','subtask 2','subtask 3'],
-                records: ['0001234','0002343','002342','0002342']
-            }
+            task: '',
+            subtasks: [],
+            records: []
         }
         this.logState = this.logState.bind(this)
+        this.handler = this.handler.bind(this)
     }
     componentDidMount(){
         Axios.get('http://localhost:3002/api/get-all-tasks')
@@ -28,12 +27,20 @@ class Home extends Component {
             .catch(e => console.log(e))
     }
     logState(){console.log(this.state)}
+    handler(s){
+        console.log(s)
+        this.setState({
+            task:s.task,
+            subtasks:s.subtasks,
+            records:s.records
+        },function(){console.log(this.state)})
+    }
     render(){
         return(
             <div>
-                <SmallTimer/>
+                <SmallTimer handler={this.handler} />
                 <CreateTask/>
-                <Timer timerInfo={{...this.state.task}} />
+                {this.state.task.length && <Timer timerInfo={{...this.state}} />}
                 <div onClick={this.logState}>state</div>
             </div>
         )

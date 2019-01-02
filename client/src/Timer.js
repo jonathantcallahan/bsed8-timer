@@ -22,9 +22,9 @@ class Timer extends Component {
         this.postTask = this.postTask.bind(this)
     }
     componentDidMount(){
-        this.setState((state,props) => {
-            return {...props.timerInfo, totalPlusMinusSeconds: parseInt(props.timerInfo.records[0])}
-        })
+        //this.props.timerInfo.task && this.setState((state,props) => {
+        //    return {...props.timerInfo, totalPlusMinusSeconds: parseInt(props.timerInfo.records[0])}
+        //})
     }
     postTask = data => {
         Axios.post('http://localhost:3002/api/update-task-records', data)
