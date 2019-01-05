@@ -51,14 +51,14 @@ class Timer extends Component {
     nextButton(){
         const s = this.state.ctCounter
         if(s == -1) { return 'START' }
-        else if(s == this.state.subtasks.length -1){ return 'FINISH'}
+        else if(s >= this.state.subtasks.length -1){ return 'FINISH'}
         else { return 'NEXT' }
     }
     updateSubtask(){
         if(this.state.ctCounter == -1){ this.slimTimer(); this.slimTimer(true,true) }
         this.state.ctCounter < this.state.subtasks.length ? 
             this.setState({ctCounter:this.state.ctCounter+1}) :
-            this.setState({pauseTimers:true})
+            this.setState({pauseTimers:true},this.postTask())
 
     }
     slimTimer(t=false,start=false){
@@ -96,7 +96,8 @@ class Timer extends Component {
                                             id={`subtask-${i}`} 
                                             record= {this.state.records.length ? this.state.records[i + 1] : 0}>
                                             <div className='timer-subtask-title'>{this.state.subtasks[i]}</div>
-                                            <div className={`timer-subtask-plus-minus ${this.state['subtask_'+this.state.ctCounter] > this.state['record_'+this.state.ctCounter] ? 'red':'green'}`}>
+                                            <div className={`timer-subtask-plus-minus 
+                                                ${this.state['subtask_' + this.state.ctCounter] > this.state['record_' + this.state.ctCounter] ? 'red' : 'green' }`}>
                                             {this.getTime(this.state[`subtask_${i}`] - this.state[`record_${i}`]) || '00:00:00' }
                                             </div>
                                         </div>
