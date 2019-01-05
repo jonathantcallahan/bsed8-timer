@@ -41,7 +41,6 @@ class Home extends Component {
                 <SmallTimer handler={this.handler} />
                 <CreateTask/>
                 {this.state.task.length && <Timer timerInfo={{...this.state}} />}
-                <div onClick={this.logState}>state</div>
             </div>
         )
     }
