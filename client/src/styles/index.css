@@ -1,5 +1,8 @@
 * {
-    font-family: monospace
+    font-family: monospace;
+    color: white !important;
+    border-color: white !important;
+    background-color: black !important
 }
 
 .bold {
@@ -25,7 +28,8 @@
 .task-list-container, .container {
     border: 1px solid black;
     border-radius: 3px;
-    margin: 10px
+    margin: 10px;
+    min-height: 80px
 }
 
 .task-list-title, .title {
@@ -34,7 +38,10 @@
 }
 
 .task-list-task {
-    margin: 5px
+    margin: 20px;
+    height: 10px;
+    display: block;
+    padding: 10px;
 }
 
 .create-new-task-input {
@@ -88,4 +95,11 @@
 
 .timer-button-next {
     margin: 10px 0px 0px
+}
+
+.task-list-bar {
+    width: 15px;
+    background-color: white !important;
+    margin: 0px 10px;
+    display: inline-block
 }

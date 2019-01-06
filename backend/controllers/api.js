@@ -9,7 +9,10 @@ export default (app,Task,Timer) => {
             .catch(e => res.status(422).json(e))
     })
     app.get('/api/get-task-details', (req,res) => {
-        res.send('asdf')
+        Timer
+            .find()
+            .then(d => res.json(d))
+            .catch(e => res.send(e))
     })
     app.post('/api/create-new-task', (req,res) => {
         console.log(req.body)
@@ -19,12 +22,11 @@ export default (app,Task,Timer) => {
             .catch(e => res.send(e))
     })
     app.post('/api/update-task-records', (req,res) => {
-        console.log(req.body)
         const t = new Timer(req.body)
-        t.save()
-            .then(d => console.log(d))
-            .catch(e => console.log(e))
         console.log(t)
-        res.send('asdf')
+        t.save()
+            .then(d => res.send(d))
+            .catch(e => res.send(e))
+        console.log(t)
     })
 }

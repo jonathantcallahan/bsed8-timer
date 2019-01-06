@@ -22,9 +22,6 @@ class Home extends Component {
         Axios.get('http://localhost:3002/api/get-all-tasks')
             .then(d => this.setState(state => { return {taskList:d.data}}))
             .catch(e => console.log(e))
-        Axios.post('http://localhost:3002/api/create-new-task')
-            .then(d => console.log(d))
-            .catch(e => console.log(e))
     }
     logState(){console.log(this.state)}
     handler(s){

@@ -8,11 +8,6 @@ class Timer extends Component {
             task: '',
             subtasks: [],
             records: [],
-            currentSubtask: -1,
-            currentTimerSeconds: 0,
-            currentPlusMinusSeconds: 0,
-            totalTimerSeconds: 0,
-            totalPlusMinusSeconds: 0,
             pauseTimers: false,
             taskPosted: false,
             ctAll: 0,
@@ -32,8 +27,18 @@ class Timer extends Component {
             this.setState({[`subtask_${i}`]:0,[`record_${i}`]:parseInt(this.props.timerInfo.records[i+1])||0})
         })
     }
-    postTask = data => {
-        Axios.post('http://localhost:3002/api/update-task-records', data)
+    postTask = () => {
+        const r = []
+        for(let key in this.state){if(key.includes('subtask_') && !isNaN(this.state[key])) r.push(this.state[key])}
+        const t = {
+            user: '',
+            date: new Date(),
+            task: this.state.task,
+            total: this.state.ctAll,
+            subtasks: r  
+        }
+        console.log(t)
+        Axios.post('http://localhost:3002/api/update-task-records', t)
             .then(d => console.log(d))
             .catch(e => console.log(e))
     }
@@ -56,14 +61,12 @@ class Timer extends Component {
     }
     updateSubtask(){
         if(this.state.ctCounter == -1){ this.slimTimer(); this.slimTimer(true,true) }
-        this.state.ctCounter < this.state.subtasks.length ? 
+        this.state.ctCounter < this.state.subtasks.length - 1 ? 
             this.setState({ctCounter:this.state.ctCounter+1}) :
-            this.setState({pauseTimers:true},this.postTask())
+            this.setState({pauseTimers:true},()=>{this.postTask()})
 
     }
     slimTimer(t=false,start=false){
-        console.log('slim timer')
-        console.log(this.state)
         // stop if tasks are completed
         if(this.state.pauseTimers){ return }
         // use same function for total counter
@@ -85,7 +88,7 @@ class Timer extends Component {
                         </div>
                         <div className='timer-large-time-container'>
                             <span className='timer-large-time'>{this.state.ctAll ? this.getTime(this.state[`subtask_${this.state.ctCounter}`]) : '00:00:00'}</span>
-                            <span className='timer-large-time-plus-minus'>{this.state.currentPlusMinusSeconds > 0 ? this.getTime(this.state.currentPlusMinusSeconds) : '00:00:00'}</span>
+                            <span className='timer-large-time-plus-minus'>{this.getTime(this.state[`subtask_${this.state.ctCounter}`] - this.state[`record_${this.state.ctCounter}`]) || '00:00:00'}</span>
                         </div>
                         <div className='timer-subtasks-container'>
                             {

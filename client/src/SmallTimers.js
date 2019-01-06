@@ -17,6 +17,24 @@ class SmallTimer extends Component {
                 this.setState({tasks:data.data})
             })
             .catch(err => console.log(err))
+        Axios.get('http://localhost:3002/api/get-task-details')
+            .then(d => {
+                console.log(d)
+                d.data.forEach(e => {
+                    console.log(e)
+                    if(this.state[e.task]){
+                        const c = this.state[e.task]
+                        c.push(e.total)
+                        console.log(e.task,c)
+                        this.setState({[e.task]:c})
+                    } else {
+                        this.setState({
+                            [e.task]:[e.total]
+                        }, ()=> {console.log(this.state)})
+                    }
+                })
+            })
+            .catch(e => console.log(e))
     }
     selectTask({target}){
         this.props.handler(this.state.tasks[target.id])
@@ -26,12 +44,18 @@ class SmallTimer extends Component {
             <div className='task-list-container'>
                 <div className='task-list-title'>TASK LIST</div>
                 {this.state.tasks.length && this.state.tasks.map((e,i) => {
-                    return(
+                    return e.subtasks.length ? (
                         <div 
                             id={i}
                             className='task-list-task' 
-                            onClick={this.selectTask}>{e.task}</div>
-                    )
+                            onClick={this.selectTask}>{e.task}
+                            <span id={i}>
+                            {this.state[e.task] && this.state[e.task].map((val,i)=>{
+                                return <div className='task-list-bar' style={{height:`${((Math.max(...this.state[e.task]))/val)*100}%`}}></div>
+                            })}
+                            </span>    
+                        </div>
+                    ) : ''
                 })}
             </div>
         )
