@@ -20,8 +20,9 @@ class Timer extends Component {
         this.updateSubtask = this.updateSubtask.bind(this)
     }
     componentDidMount(){
+        console.log(this.props.timerInfo, 'props')
         this.props.timerInfo.task && this.setState((state,props) => {
-            return {...props.timerInfo, taskRecord:parseInt(props.timerInfo.records[0]||0) ,totalPlusMinusSeconds: parseInt(props.timerInfo.records[0]) || 0}
+            return {...props.timerInfo, taskRecord:parseInt(props.timerInfo.records[0]||0)}
         })
         this.props.timerInfo.subtasks.forEach((e,i)=>{
             this.setState({[`subtask_${i}`]:0,[`record_${i}`]:parseInt(this.props.timerInfo.records[i+1])||0})
@@ -44,6 +45,9 @@ class Timer extends Component {
     }
     getTime = seconds => {
         // convert secconds in hh:mm:ss
+        console.log(seconds, 'seconds')
+        const negative = seconds < 0
+        if(negative){seconds = seconds * -1}
         const h = Math.floor(seconds/3600)
         const m = Math.floor((seconds-(h*3600))/60)
         const s = seconds - (h*3600) - (m*60)
@@ -51,7 +55,7 @@ class Timer extends Component {
         // make sure each number is 2 digits
         digits = digits.map(e => e.length <= 1 ? `0${e}` : e)
         
-        return `${digits[0]}:${digits[1]}:${digits[2]}`
+        return `${negative ? '-' : ''}${digits[0]}:${digits[1]}:${digits[2]}`
     }
     nextButton(){
         const s = this.state.ctCounter
@@ -60,6 +64,7 @@ class Timer extends Component {
         else { return 'NEXT' }
     }
     updateSubtask(){
+        console.log(this.state)
         if(this.state.ctCounter == -1){ this.slimTimer(); this.slimTimer(true,true) }
         this.state.ctCounter < this.state.subtasks.length - 1 ? 
             this.setState({ctCounter:this.state.ctCounter+1}) :
@@ -88,7 +93,7 @@ class Timer extends Component {
                         </div>
                         <div className='timer-large-time-container'>
                             <span className='timer-large-time'>{this.state.ctAll ? this.getTime(this.state[`subtask_${this.state.ctCounter}`]) : '00:00:00'}</span>
-                            <span className='timer-large-time-plus-minus'>{this.getTime(this.state[`subtask_${this.state.ctCounter}`] - this.state[`record_${this.state.ctCounter}`]) || '00:00:00'}</span>
+                            <span className='timer-large-time-plus-minus'>{this.state.ctAll ? this.getTime(this.state[`subtask_${this.state.ctCounter}`] - this.state[`record_${this.state.ctCounter}`]) : '00:00:00'}</span>
                         </div>
                         <div className='timer-subtasks-container'>
                             {

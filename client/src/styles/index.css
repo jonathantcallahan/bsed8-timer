@@ -29,7 +29,7 @@
     border: 1px solid black;
     border-radius: 3px;
     margin: 10px;
-    min-height: 80px
+    min-height: 200px
 }
 
 .task-list-title, .title {
@@ -42,6 +42,15 @@
     height: 10px;
     display: block;
     padding: 10px;
+}
+
+.task-list-graph {
+    display: inline-block;
+    height: 30px
+}
+
+.delete-task {
+    margin-right: 5px
 }
 
 .create-new-task-input {

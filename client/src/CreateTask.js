@@ -28,7 +28,7 @@ class CreateTimer extends Component {
             task:'',
             subtask:'',
             subtasks:[]
-        })
+        }, () => this.props.update(this.state.task) )
     }
     update({target}){
         //console.log(target.value)

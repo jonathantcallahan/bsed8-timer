@@ -15,7 +15,7 @@ export default (app,Task,Timer) => {
             .catch(e => res.send(e))
     })
     app.post('/api/create-new-task', (req,res) => {
-        console.log(req.body)
+        // console.log(req.body)
         const t = new Task(req.body)
         t.save()
             .then(r => res.send(r))
@@ -27,6 +27,28 @@ export default (app,Task,Timer) => {
         t.save()
             .then(d => res.send(d))
             .catch(e => res.send(e))
-        console.log(t)
+        Task.findOne({task:t.task})
+            .then( taskData => {
+                console.log(taskData)
+                const record = taskData.records.length ? parseInt(taskData.records[0]) : Infinity
+                const newRecords = t.subtasks
+                newRecords.unshift(t.total)
+                if(parseInt(t.total) < record){
+                    console.log('new')
+                    Task.findOneAndUpdate(
+                        {task:t.task},
+                        {records:newRecords},
+                        {upsert:true})
+                        .then( update => console.log(update) )
+                        .catch( err => console.log(err) )
+                }
+                
+                
+            })
+            .catch( err => console.log(err))
+    })
+    app.post('/api/delete-task', (req,res) => {
+        console.log(req.body)
+        res.send('asdf')
     })
 }

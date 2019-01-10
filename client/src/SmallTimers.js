@@ -6,9 +6,11 @@ class SmallTimer extends Component {
     constructor(props){
         super(props)
         this.state = {
-            tasks:[]
+            tasks:[],
+            task_ids:[]
         }
         this.selectTask = this.selectTask.bind(this)
+        this.deleteTask = this.selectTask.bind(this)
     }
     componentDidMount(){
         Axios.get('http://localhost:3002/api/get-all-tasks')
@@ -21,16 +23,18 @@ class SmallTimer extends Component {
             .then(d => {
                 console.log(d)
                 d.data.forEach(e => {
-                    console.log(e)
+                    const ids = this.state.task_ids
+                    ids.push(e._id)
+                    this.setState({task_ids:ids}, console.log(this.state))
                     if(this.state[e.task]){
                         const c = this.state[e.task]
                         c.push(e.total)
-                        console.log(e.task,c)
+                        //console.log(e.task,c,'tasks')
                         this.setState({[e.task]:c})
                     } else {
                         this.setState({
                             [e.task]:[e.total]
-                        }, ()=> {console.log(this.state)})
+                        }, ()=> {console.log(this.state, 'total')})
                     }
                 })
             })
@@ -38,6 +42,12 @@ class SmallTimer extends Component {
     }
     selectTask({target}){
         this.props.handler(this.state.tasks[target.id])
+    }
+    deleteTask(e){
+        // need to stop event propagation
+        e.stopPropogation()
+        e.nativeEvent.stopImmideatePropagation()
+        Axios.post('http://localhost:3002/api/delete-task', e.value, data => {})
     }
     render(){
         return (
@@ -48,12 +58,14 @@ class SmallTimer extends Component {
                         <div 
                             id={i}
                             className='task-list-task' 
-                            onClick={this.selectTask}>{e.task}
-                            <span id={i}>
+                            onClick={this.selectTask}>
+                            <span value={this.state.task_ids[i]} onClick={''} className='delete-task' >del</span>
+                            {e.task}
+                            <div class='task-list-graph' id={i}>
                             {this.state[e.task] && this.state[e.task].map((val,i)=>{
-                                return <div className='task-list-bar' style={{height:`${((Math.max(...this.state[e.task]))/val)*100}%`}}></div>
+                                return <div className='task-list-bar' style={{height:`${(val/(Math.max(...this.state[e.task])))*100}%`}}></div>
                             })}
-                            </span>    
+                            </div>    
                         </div>
                     ) : ''
                 })}

@@ -13,10 +13,12 @@ class Home extends Component {
             taskList: [],
             task: '',
             subtasks: [],
-            records: []
+            records: [],
+            newTask: []
         }
         this.logState = this.logState.bind(this)
         this.handler = this.handler.bind(this)
+        this.forceUpdate = this.forceUpdate.bind(this)
     }
     componentDidMount(){
         Axios.get('http://localhost:3002/api/get-all-tasks')
@@ -25,18 +27,21 @@ class Home extends Component {
     }
     logState(){console.log(this.state)}
     handler(s){
-        // console.log(s)
+        console.log(s, 'handler')
         this.setState({
             task:s.task,
             subtasks:s.subtasks,
             records:s.records
         })
     }
+    forceUpdate(task){
+        this.setState({newTask:task})
+    }
     render(){
         return(
             <div>
-                <SmallTimer handler={this.handler} />
-                <CreateTask/>
+                <SmallTimer handler={this.handler} newTask={this.state.newTask} />
+                <CreateTask update={this.forceUpdate} />
                 {this.state.task.length && <Timer timerInfo={{...this.state}} />}
             </div>
         )
