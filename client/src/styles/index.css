@@ -40,13 +40,14 @@
 .task-list-task {
     margin: 20px;
     height: 10px;
-    display: block;
+    display: inline-block;
     padding: 10px;
 }
 
 .task-list-graph {
     display: inline-block;
-    height: 30px
+    height: 30px;
+    width: 80%
 }
 
 .delete-task {

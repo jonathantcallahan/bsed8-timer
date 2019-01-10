@@ -48,7 +48,11 @@ export default (app,Task,Timer) => {
             .catch( err => console.log(err))
     })
     app.post('/api/delete-task', (req,res) => {
+        console.log(req.body.id)
         console.log(req.body)
-        res.send('asdf')
+        Task.deleteOne({'task':req.body.id}, (data, err) => {
+            console.log(data || err)
+            res.send(data || err)
+        })
     })
 }
