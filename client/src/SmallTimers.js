@@ -11,17 +11,25 @@ class SmallTimer extends Component {
         }
         this.selectTask = this.selectTask.bind(this)
         this.deleteTask = this.deleteTask.bind(this)
+        this.getTasks = this.getTasks.bind(this)
     }
-    componentDidMount(){
+    componentDidMount(nextProps){
+        this.getTasks()
+        // if(nextProps !== this.props){
+        // this.props.getTasks()
+        // console.log(this.props.s.tasks, this.props.s.task_ids)
+        // this.setState({tasks:this.props.s.tasks, task_ids:this.props.s.task_ids}, () => {
+        //     console.log(this.state)
+        // })
+        // console.log(this.props.s)}
+        // this.props.s.forEach(e => console.log(e))
+    }
+    getTasks(){
         Axios.get('http://localhost:3002/api/get-all-tasks')
-            .then(data => {
-                // console.log(data.data)
-                this.setState({tasks:data.data})
-            })
+            .then(data => this.setState({tasks:data.data}) )
             .catch(err => console.log(err))
         Axios.get('http://localhost:3002/api/get-task-details')
             .then(d => {
-                console.log(d)
                 d.data.forEach(e => {
                     const ids = this.state.task_ids
                     ids.push(e._id)
@@ -29,16 +37,15 @@ class SmallTimer extends Component {
                     if(this.state[e.task]){
                         const c = this.state[e.task]
                         c.push(e.total)
-                        //console.log(e.task,c,'tasks')
                         this.setState({[e.task]:c})
                     } else {
                         this.setState({
                             [e.task]:[e.total]
-                        }, ()=> {console.log(this.state, 'total')})
+                        }, () => {console.log(this.state, 'total')})
                     }
                 })
             })
-            .catch(e => console.log(e))
+            .catch(err => console.log(err))
     }
     selectTask({target}){
         this.props.handler(this.state.tasks[target.id])
@@ -52,8 +59,8 @@ class SmallTimer extends Component {
         }
         // console.log(value)
         Axios.post('http://localhost:3002/api/delete-task', {id:attributes[0].value})
-            .then(data => console.log(data))
-            .catch(err => console.log(err))
+            .then(data => {console.log(data); this.getTasks() })
+            .catch(err => console.log(err)) 
     }
     render(){
         return (

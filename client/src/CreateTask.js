@@ -28,7 +28,7 @@ class CreateTimer extends Component {
             task:'',
             subtask:'',
             subtasks:[]
-        }, () => this.props.update(this.state.task) )
+        }, () => { this.props.getTasks()} )
     }
     update({target}){
         //console.log(target.value)
@@ -52,7 +52,7 @@ class CreateTimer extends Component {
                     type='text' 
                     name='task'
                     placeholder='task'
-                    value={this.state.task} 
+                    value={this.state.task}
                     onChange={this.update}></input>
                 </div>
                 <div className='create-new-task-input'>

@@ -50,6 +50,9 @@ export default (app,Task,Timer) => {
     app.post('/api/delete-task', (req,res) => {
         console.log(req.body.id)
         console.log(req.body)
+        Task.find({task:req.body.id})
+            .then(data => console.log(data))
+            .catch(err => console.log(err))
         Task.deleteOne({'task':req.body.id}, (data, err) => {
             console.log(data || err)
             res.send(data || err)
